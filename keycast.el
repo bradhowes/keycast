@@ -356,11 +356,13 @@ t to show the actual COMMAND, or a symbol to be shown instead."
 (defvar keycast-header-line-mode)
 (defvar keycast-tab-bar-mode)
 (defvar keycast-log-mode)
+(defvar keycast-tracking-mode)
 
 (defun keycast--mode-active-p (&optional line)
   (or keycast-mode-line-mode
       keycast-header-line-mode
       keycast-tab-bar-mode
+      keycast-tracking-mode
       (and (not line) keycast-log-mode)))
 
 (defvar keycast--this-command-desc nil)
@@ -790,6 +792,31 @@ t to show the actual COMMAND, or a symbol to be shown instead."
       (with-current-buffer buf
         (let ((inhibit-read-only t))
           (erase-buffer))))))
+
+;;; Tracking
+
+;;;###autoload
+(define-minor-mode keycast-tracking-mode
+  "Track invoked commands and their key bindings in memory.
+Use `keycast-tracking-segment-format' to obtain a formatted
+representation suitable for use in the modeline."
+  :global t
+  (cond
+    (keycast-tracking-mode
+     (add-hook 'post-command-hook #'keycast--update t)
+     (add-hook 'minibuffer-exit-hook #'keycast--minibuffer-exit t))
+    ((not (keycast--mode-active-p))
+     (remove-hook 'post-command-hook #'keycast--update)
+     (remove-hook 'minibuffer-exit-hook #'keycast--minibuffer-exit))))
+
+;;;###autoload
+(defun keycast-tracking-segment-value ()
+  "Format tracked key info using `keycast-mode-line-format'.
+Returns a formatted value when a keycast mode is active, or
+nil when none are active."
+  (when (and keycast-tracking-mode
+             keycast-mode-line-format)
+    (keycast--format keycast-mode-line-format)))
 
 ;;; _
 (provide 'keycast)
