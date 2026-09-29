@@ -1,6 +1,6 @@
 * Show current command and its binding
 
-This package provides four modes that display the current command and
+This package provides five modes that display the current command and
 its key or mouse binding.
 
 - ~keycast-mode-line-mode~ shows the current binding at the bottom of
@@ -14,6 +14,12 @@ its key or mouse binding.
 
 - ~keycast-log-mode~ displays a list of recent bindings in a dedicated
   frame.
+
+- ~keycast-tracking-mode~ only tracks the last binding in memory.
+  Use ~keycast-tracking-segment-value~ to obtain a formatted
+  representation of the last binding. See the documentation
+  for ~keycast-mode-line-format~ on what can be returned in
+  the formatted value.
 
 [[http://readme.emacsair.me/keycast.png]]
 
